@@ -1,0 +1,1926 @@
+# DSA_externals
+
+<!-- Assignment 1 -->
+//Shell, insertion,Radix sort
+#include <iostream>
+#include <string>
+using namespace std;
+class Student {
+	int rollNo;
+	string name;
+	float sgpa;
+public:
+	void input() {
+    	cout << "Enter roll number: ";
+    	cin >> rollNo;
+    	cin.ignore();
+    	cout << "Enter name: ";
+    	getline(cin, name);
+    	cout << "Enter SGPA: ";
+    	cin >> sgpa;
+    	cin.ignore();
+	}
+	void display() const {
+    	cout << "\nStudent Details:" << endl;
+    	cout << "Roll No: " << rollNo << endl;
+    	cout << "Name: " << name << endl;
+    	cout << "SGPA: " << sgpa << endl;
+	}
+	string getName() const {
+    	return name;
+	}
+	int getRollNo() const {
+    	return rollNo;
+	}
+	float getSGPA() const {
+    	return sgpa;
+	}
+	void searchStudents(Student* students, int n, const string& key) const {
+    	int i = 0;
+    	while (i < n) {
+        	if (students[i].name == key) {
+            	cout << "\nStudent found:";
+            	students[i].display();
+            	break;
+        	}
+        	i++;
+    	}
+    	if (i == n) {
+        	cout << "\nNo student found with the name \"" << key << "\"." << endl;
+    	}
+	}
+	void shell_sort(Student* students, int n) const {
+    	for (int gap = n / 2; gap > 0; gap /= 2) {
+        	for (int i = gap; i < n; i++) {
+            	Student temp = students[i];
+            	int j;
+            	for (j = i; j >= gap && students[j - gap].name > temp.name; j -= gap) {
+                	students[j] = students[j - gap];
+            	}
+            	students[j] = temp;
+        	}
+    	}
+    	cout << "\nStudents sorted by name successfully.\n";
+	}
+	void insertion_sort(Student* students, int n) const {
+    	for (int i = 1; i < n; i++) {
+        	Student key = students[i];
+        	int j = i - 1;
+        	while (j >= 0 && students[j].sgpa > key.sgpa) {
+            	students[j + 1] = students[j];
+            	j--;
+        	}
+        	students[j + 1] = key;
+    	}
+    	cout << "\nStudents sorted by SGPA successfully.\n";
+	}
+	int getMaxRoll(Student* students, int n) const {
+    	int max = students[0].rollNo;
+    	for (int i = 1; i < n; i++) {
+        	if (students[i].rollNo > max)
+            	max = students[i].rollNo;
+    	}
+    	return max;
+	}
+	void countSort(Student* students, int n, int exp) const {
+    	Student* output = new Student[n];
+    	int count[10] = {0};
+    	for (int i = 0; i < n; i++)
+        	count[(students[i].rollNo / exp) % 10]++;
+    	for (int i = 1; i < 10; i++)
+        	count[i] += count[i - 1];
+    	for (int i = n - 1; i >= 0; i--) {
+        	output[count[(students[i].rollNo / exp) % 10] - 1] = students[i];
+        	count[(students[i].rollNo / exp) % 10]--;
+    	}
+    	for (int i = 0; i < n; i++)
+        	students[i] = output[i];
+    	delete[] output;
+	}
+	void radix_sort(Student* students, int n) const {
+    	int maxRoll = getMaxRoll(students, n);
+    	for (int exp = 1; maxRoll / exp > 0; exp *= 10)
+        	countSort(students, n, exp);
+    	cout << "\nStudents sorted by Roll Number using Radix Sort.\n";
+	}
+};
+int main() {
+	int n, ch;
+	cout << "Enter number of students: ";
+	cin >> n;
+	cin.ignore();
+	Student* students = new Student[n];
+	Student temp;
+	do {
+    	cout << "\n\t1. Create"
+         	<< "\n\t2. Display"
+         	<< "\n\t3. Search by Name"
+         	<< "\n\t4. Sort by Name (Shell Sort)"
+         	<< "\n\t5. Sort by SGPA (Insertion Sort)"
+         	<< "\n\t6. Sort by Roll Number (Radix Sort)"
+         	<< "\nEnter your choice: ";
+    	cin >> ch;
+    	cin.ignore();
+    	if (ch == 1) {
+        	for (int i = 0; i < n; i++) {
+            	cout << "\nEnter details for student " << i + 1 << ":\n";
+            	students[i].input();
+        	}
+    	}
+    	else if (ch == 2) {
+        	cout << "\nDisplaying student details:\n";
+        	for (int i = 0; i < n; i++) {
+            	students[i].display();
+        	}
+    	}
+    	else if (ch == 3) {
+        	string keyword;
+        	cout << "\nEnter name to search: ";
+        	getline(cin, keyword);
+        	temp.searchStudents(students, n, keyword);
+    	}
+    	else if (ch == 4) {
+        	temp.shell_sort(students, n);
+        	cout << "\nDisplaying sorted student details:\n";
+        	for (int i = 0; i < n; i++) {
+            	students[i].display();
+        	}
+    	}
+    	else if (ch == 5) {
+        	temp.insertion_sort(students, n);
+        	cout << "\nDisplaying sorted student details:\n";
+        	for (int i = 0; i < n; i++) {
+            	students[i].display();
+        	}
+    	}
+    	else if (ch == 6) {
+        	temp.radix_sort(students, n);
+        	cout << "\nDisplaying sorted student details:\n";
+        	for (int i = 0; i < n; i++) {
+            	students[i].display();
+        	}
+    	}
+    	else {
+        	cout << "\nInvalid choice. Please try again.\n";
+    	}
+    	cout << "\nDo you want to continue? (Enter 1 for Yes): ";
+    	cin >> ch;
+    	cin.ignore();
+	} while (ch == 1);
+	delete[] students;
+	return 0;
+}
+
+
+<!-- Assignment 2 -->
+//Quick sort on employee’s data program
+#include <iostream>
+#include <string>
+using namespace std;
+
+class Employee {
+public:
+    int rollNo;
+    string name;
+    int empID;
+    string empName;
+    double empSalary;
+
+    void input() {
+        cout << "Enter employee ID: ";
+        cin >> empID;
+        cin.ignore();
+        cout << "Enter employee name: ";
+        getline(cin, empName);
+        cout << "Enter employee salary: ";
+        cin >> empSalary;
+        cin.ignore();  
+    }
+
+    void display() {
+        cout << empID << "\t" << empName << "\t\t" << empSalary << "\n";
+    }
+};
+
+void searchemployees(Employee* employees, int n, const string& key) {
+    int i = 0;
+    while (i < n) {
+        if (employees[i].name == key) {
+            cout << "\nEmployee found:";
+            employees[i].display();
+            return; 
+        }
+        i++;
+    }
+    cout << "\nNo employee found with the name \"" << key << "\"." << endl;
+}
+
+// Swap function
+void swap(Employee &a, Employee &b) {
+    Employee temp = a;
+    a = b;
+    b = temp;
+}
+
+// Partition function for QuickSort
+int partition(Employee arr[], int low, int high) {
+    int pivot = arr[high].empID;
+    int i = low - 1;
+
+    for (int j = low; j < high; j++) {
+        if (arr[j].empID <= pivot) {
+            i++;
+            swap(arr[i], arr[j]);
+        }
+    }
+    swap(arr[i + 1], arr[high]);
+    return i + 1;
+}
+
+// QuickSort function
+void quickSort(Employee arr[], int low, int high) {
+    if (low < high) {
+        int pi = partition(arr, low, high);
+        quickSort(arr, low, pi - 1);
+        quickSort(arr, pi + 1, high);
+    }
+}
+
+int main() {
+    int n, ch;
+    cout << "Enter number of employees: ";
+    cin >> n;
+    cin.ignore();  
+
+    Employee* employees = new Employee[n];
+    do {
+        cout << "\n\t1. Create"
+             << "\n\t2. Display"
+             << "\n\t3. Search by Name"
+             << "\n\t4. Sort Employees"
+             << "\nEnter your choice: ";
+        cin >> ch;
+        cin.ignore();
+
+        switch (ch) {
+            case 1:
+                for (int i = 0; i < n; i++) {
+                    cout << "\nEnter details for employee " << i + 1 << ":" << endl;
+                    employees[i].input();
+                }
+                break;
+
+            case 2:
+                cout << "\nDisplaying employee details:\n";
+                for (int i = 0; i < n; i++) {
+                    employees[i].display();
+                }
+                break;
+
+            case 3: {
+                string keyword;
+                cout << "\nEnter name to search: ";
+                getline(cin, keyword);
+                searchemployees(employees, n, keyword);
+                break;
+            }
+
+            case 4:
+                quickSort(employees, 0, n - 1);
+                cout << "\nDisplaying sorted employee details:\n";
+                for (int i = 0; i < n; i++) {
+                    employees[i].display();
+                }
+                break;
+
+            default:
+                cout << "\nInvalid choice. Please try again.\n";
+                break;
+        }
+
+        cout << "\nDo you want to continue? (Enter 1 for Yes): ";
+        cin >> ch;
+        cin.ignore();  
+
+    } while (ch == 1);
+
+    delete[] employees;
+    return 0;
+}
+
+<!-- Assignment 2 -->
+//Merge sort on employee’s data program
+#include <iostream>
+#include <string>
+using namespace std;
+
+class Employee {
+public:
+    int rollNo;
+    string name;
+    int empID;
+    string empName;
+    double empSalary;
+
+    void input() {
+        cout << "Enter employee ID: ";
+        cin >> empID;
+        cin.ignore();
+        cout << "Enter employee name: ";
+        getline(cin, empName);
+        cout << "Enter employee salary: ";
+        cin >> empSalary;
+        cin.ignore();  
+    }
+
+    void display() {
+        cout << empID << "\t" << empName << "\t\t" << empSalary << "\n";
+    }
+};
+
+void searchemployees(Employee* employees, int n, const string& key) {
+    int i = 0;
+    while (i < n) {
+        if (employees[i].name == key || employees[i].empName == key) {
+            cout << "\nEmployee found:\n";
+            employees[i].display();
+            return;
+        }
+        i++;
+    }
+    cout << "\nNo employee found with the name \"" << key << "\"." << endl;
+}
+
+// Merge function
+void merge(Employee arr[], int left, int mid, int right) {
+    int n1 = mid - left + 1;
+    int n2 = right - mid;
+
+    Employee* L = new Employee[n1];
+    Employee* R = new Employee[n2];
+
+    for (int i = 0; i < n1; i++)
+        L[i] = arr[left + i];
+    for (int j = 0; j < n2; j++)
+        R[j] = arr[mid + 1 + j];
+
+    int i = 0, j = 0, k = left;
+    while (i < n1 && j < n2) {
+        if (L[i].empID <= R[j].empID) {
+            arr[k] = L[i];
+            i++;
+        } else {
+            arr[k] = R[j];
+            j++;
+        }
+        k++;
+    }
+
+    while (i < n1) {
+        arr[k++] = L[i++];
+    }
+    while (j < n2) {
+        arr[k++] = R[j++];
+    }
+
+    delete[] L;
+    delete[] R;
+}
+
+// Merge Sort function
+void mergeSort(Employee arr[], int left, int right) {
+    if (left < right) {
+        int mid = (left + right) / 2;
+        mergeSort(arr, left, mid);
+        mergeSort(arr, mid + 1, right);
+        merge(arr, left, mid, right);
+    }
+}
+
+int main() {
+    int n, ch;
+    cout << "Enter number of employees: ";
+    cin >> n;
+    cin.ignore();  
+
+    Employee* employees = new Employee[n];
+    do {
+        cout << "\n\t1. Create"
+             << "\n\t2. Display"
+             << "\n\t3. Search by Name"
+             << "\n\t4. Sort Employees by ID (Merge Sort)"
+             << "\nEnter your choice: ";
+        cin >> ch;
+        cin.ignore();
+
+        switch (ch) {
+            case 1:
+                for (int i = 0; i < n; i++) {
+                    cout << "\nEnter details for employee " << i + 1 << ":" << endl;
+                    employees[i].input();
+                }
+                break;
+
+            case 2:
+                cout << "\nDisplaying employee details:\n";
+                for (int i = 0; i < n; i++) {
+                    employees[i].display();
+                }
+                break;
+
+            case 3: {
+                string keyword;
+                cout << "\nEnter name to search: ";
+                getline(cin, keyword);
+                searchemployees(employees, n, keyword);
+                break;
+            }
+
+            case 4:
+                mergeSort(employees, 0, n - 1);
+                cout << "\nDisplaying sorted employee details by ID:\n";
+                for (int i = 0; i < n; i++) {
+                    employees[i].display();
+                }
+                break;
+
+            default:
+                cout << "\nInvalid choice. Please try again.\n";
+                break;
+        }
+
+        cout << "\nDo you want to continue? (Enter 1 for Yes): ";
+        cin >> ch;
+        cin.ignore();  
+
+    } while (ch == 1);
+
+    delete[] employees;
+    return 0;
+}
+
+<!-- Assignment 3 -->
+#include <iostream>
+#include <string>
+using namespace std;
+
+struct Node {
+	string data;
+	Node* next;
+};
+
+// Function to create a new node
+Node* createNode(const string &data) {
+	Node* newNode = new Node;
+	newNode->data = data;
+	newNode->next = nullptr;
+	return newNode;
+}
+
+// Insert at start
+void insertAtStart(Node*& head, const string &data) {
+	Node* newNode = createNode(data);
+	newNode->next = head;
+	head = newNode;
+}
+
+// Insert at end
+void insertAtEnd(Node*& head, const string &data) {
+	Node* newNode = createNode(data);
+	if (head == nullptr) {
+    	head = newNode;
+    	return;
+	}
+	Node* ptr = head;
+	while (ptr->next != nullptr) {
+    	ptr = ptr->next;
+	}
+	ptr->next = newNode;
+}
+
+// Insert at position
+void insertAtPosition(Node*& head, const string &data, int position) {
+	if (position == 1) {
+    	insertAtStart(head, data);
+    	return;
+	}
+
+	Node* newNode = createNode(data);
+	Node* ptr = head;
+
+	for (int i = 1; i < position - 1 && ptr != nullptr; i++) {
+    	ptr = ptr->next;
+	}
+
+	if (ptr == nullptr) {
+    	cout << "Position out of bounds, inserting at end instead.\n";
+    	insertAtEnd(head, data);
+    	return;
+	}
+
+	newNode->next = ptr->next;
+	ptr->next = newNode;
+}
+
+// Search
+void search_key(Node* head, const string &key) {
+	Node* current = head;
+	int pos = 1;
+
+	while (current != nullptr) {
+    	if (current->data == key) {
+        	cout << "Key found, congratulations! At position " << pos << "." << endl;
+        	return;
+    	}
+    	current = current->next;
+    	pos++;
+	}
+	cout << "Key not found in the list." << endl;
+}
+
+// Delete at start
+void deleteAtStart(Node*& head) {
+	if (head == nullptr) {
+    	cout << "List is empty.\n";
+    	return;
+	}
+	Node* temp = head;
+	head = head->next;
+	delete temp;
+	cout << "Deleted node at start.\n";
+}
+
+// Delete at end
+void deleteAtEnd(Node*& head) {
+	if (head == nullptr) {
+    	cout << "List is empty.\n";
+    	return;
+	}
+
+	if (head->next == nullptr) {
+    	delete head;
+    	head = nullptr;
+    	cout << "Deleted only node in list.\n";
+    	return;
+	}
+
+	Node* ptr = head;
+	while (ptr->next->next != nullptr) {
+    	ptr = ptr->next;
+	}
+
+	delete ptr->next;
+	ptr->next = nullptr;
+	cout << "Deleted node at end.\n";
+}
+
+// Delete at position
+void deleteAtPosition(Node*& head, int position) {
+	if (head == nullptr) {
+    	cout << "List is empty.\n";
+    	return;
+	}
+
+	if (position == 1) {
+    	deleteAtStart(head);
+    	return;
+	}
+
+	Node* ptr = head;
+	for (int i = 1; i < position - 1 && ptr != nullptr; i++) {
+    	ptr = ptr->next;
+	}
+
+	if (ptr == nullptr || ptr->next == nullptr) {
+    	cout << "Position out of bounds.\n";
+    	return;
+	}
+
+	Node* temp = ptr->next;
+	ptr->next = ptr->next->next;
+	delete temp;
+	cout << "Deleted node at position " << position << ".\n";
+}
+
+// Print list
+void printList(Node* head) {
+	Node* ptr = head;
+	cout << "Linked List: ";
+	while (ptr != nullptr) {
+    	cout << ptr->data << " -> ";
+    	ptr = ptr->next;
+	}
+	cout << "NULL\n";
+}
+
+int main() {
+	Node* head = nullptr;
+	int choice, position;
+	string data;
+           	cout<<"Welcome to Puvy's customisable playlist";
+	while (true) {
+    	cout << "\n1. Insert at start\n2. Insert at end\n3. Insert at position\n";
+    	cout << "4. Delete at start\n5. Delete at end\n6. Delete at position\n";
+    	cout << "7. Display\n8. Search element\n9. Exit\nEnter your choice: ";
+    	cin >> choice;
+
+    	if (choice == 1) {
+        	cout << "Lets go!! Which song do u want to insert at start: ";
+        	cin >> data;
+        	insertAtStart(head, data);
+    	}
+    	else if (choice == 2) {
+        	cout << "Which song would u like to end your playlist with<3: ";
+        	cin >> data;
+        	insertAtEnd(head, data);
+    	}
+    	else if (choice == 3) {
+        	cout << "Umm..thinking of inserting a song in betweeen : ";
+        	cin >> data;
+        	cout << "Ur wish our command <3 Enter the position you want to insert the song at: ";
+        	cin >> position;
+        	insertAtPosition(head, data, position);
+    	}
+    	else if (choice == 4) {
+        	cout << "Bored of the same songs , Wannna delete a song from start: ";
+        	cin >> data;
+        	deleteAtStart(head);
+    	}
+    	else if (choice == 5) {
+         	cout << "Ooo wait did u wanted to delete the song from end: ";
+        	cin >> data;
+        	deleteAtEnd(head);
+    	}
+    	else if (choice == 6) {
+        	cout << "Umm..sorry sorry deleting from any position : ";
+        	cin >> data;
+        	cout << "Enter position to delete (1-based): ";
+        	cin >> position;
+        	deleteAtPosition(head, position);
+    	}
+    	else if (choice == 7) {
+        	cout << "Ohh we are ready , let see our playlist now : ";
+        	cin >> data;
+        	printList(head);
+    	}
+    	else if (choice == 8) {
+        	string key;
+        	cout << "Wanna search a song , enter the key: ";
+        	cin >> key;
+        	search_key(head, key);
+    	}
+    	else if (choice == 9) {
+        	cout << "Thank you, see you never.\n";
+        	break;
+    	}
+    	else {
+        	cout << "Invalid choice! Try again.\n";
+    	}
+	}
+
+	// Clean up
+	while (head != nullptr) {
+    	Node* ptr = head;
+    	head = head->next;
+    	delete ptr;
+	}
+
+	return 0;
+}
+
+<!-- Assignment 4 -->
+#include<iostream>
+using namespace std;
+
+class Node {
+public:
+    string data;
+    Node* next;
+    Node* prev;
+
+    Node(string val) {
+        data = val;
+        next = nullptr;
+        prev = nullptr;
+    }
+};
+
+class TextEditor {
+    Node* head;
+    Node* tail;
+
+public:
+    TextEditor() {
+        head = nullptr;
+        tail = nullptr;
+    }
+
+    void insertText(string text) {
+        Node* newNode = new Node(text);
+        if (head == nullptr) {
+            head = tail = newNode;
+        } else {
+            tail->next = newNode;
+            newNode->prev = tail;
+            tail = newNode;
+        }
+        cout << "Inserted: " << text << endl;
+    }
+
+    void deleteText(string text) {
+        if (head == nullptr) {
+            cout << "No text to delete." << endl;
+            return;
+        }
+
+        Node* temp = head;
+        while (temp != nullptr && temp->data != text) {
+            temp = temp->next;
+        }
+
+        if (temp == nullptr) {
+            cout << "Text not found." << endl;
+            return;
+        }
+
+        if (temp == head)
+            head = head->next;
+        if (temp == tail)
+            tail = tail->prev;
+
+        if (temp->prev != nullptr)
+            temp->prev->next = temp->next;
+        if (temp->next != nullptr)
+            temp->next->prev = temp->prev;
+
+        delete temp;
+        cout << "Deleted text: " << text << endl;
+    }
+
+    void displayText() {
+        if (head == nullptr) {
+            cout << "No text to display." << endl;
+            return;
+        }
+
+        Node* temp = head;
+        cout << "Text Editor Content:\n";
+        while (temp != nullptr) {
+            cout << temp->data << " ";
+            temp = temp->next;
+        }
+        cout << endl;
+    }
+
+    void searchText(string text) {
+        Node* temp = head;
+        while (temp != nullptr) {
+            if (temp->data == text) {
+                cout << "Text found: " << text << endl;
+                return;
+            }
+            temp = temp->next;
+        }
+        cout << "Text not found." << endl;
+    }
+
+    void printReverse() {
+        if (tail == nullptr) {
+            cout << "No text to display in reverse." << endl;
+            return;
+        }
+
+        Node* temp = tail;
+        cout << "Text in Reverse:\n";
+        while (temp != nullptr) {
+            cout << temp->data << " ";
+            temp = temp->prev;
+        }
+        cout << endl;
+    }
+};
+
+int main() {
+    TextEditor editor;
+    int choice;
+    string text;
+    bool running = true;
+
+    while (running) {
+        cout << "\nSelect an option:\n";
+        cout << "1. Insert text\n";
+        cout << "2. Delete text\n";
+        cout << "3. Display text\n";
+        cout << "4. Search text\n";
+        cout << "5. Print text in reverse\n";
+        cout << "6. Exit\n";
+        cout << "Enter your choice: ";
+        cin >> choice;
+
+        switch (choice) {
+            case 1:
+                cout << "Enter text to insert: ";
+                cin >> text;
+                editor.insertText(text);
+                break;
+            case 2:
+                cout << "Enter text to delete: ";
+                cin >> text;
+                editor.deleteText(text);
+                break;
+            case 3:
+                editor.displayText();
+                break;
+            case 4:
+                cout << "Enter text to search: ";
+                cin >> text;
+                editor.searchText(text);
+                break;
+            case 5:
+                editor.printReverse();
+                break;
+            case 6:
+                cout << "Exiting Text Editor." << endl;
+                running = false;
+                break;
+            default:
+                cout << "Invalid choice. Please try again." << endl;
+        }
+    }
+
+    return 0;
+}
+
+<!-- Assignment 5 -->
+#include<iostream>
+using namespace std;
+
+class Node {
+public:
+    string routeName;
+    Node* next;
+
+    Node(string name) {
+        routeName = name;
+        next = nullptr;
+    }
+};
+
+class NavigationSystem {
+    Node* head;
+
+public:
+    NavigationSystem() {
+        head = nullptr;
+    }
+
+    void addRoute(string name) {
+        Node* newNode = new Node(name);
+
+        if (head == nullptr) {
+            head = newNode;
+            head->next = head;  // Point to itself (circular)
+        } else {
+            Node* temp = head;
+            while (temp->next != head) {
+                temp = temp->next;
+            }
+            temp->next = newNode;
+            newNode->next = head;
+        }
+
+        cout << "Route '" << name << "' added successfully." << endl;
+    }
+
+    void removeRoute(string name) {
+        if (head == nullptr) {
+            cout << "No routes to remove." << endl;
+            return;
+        }
+
+        Node* curr = head;
+        Node* prev = nullptr;
+
+        // Case 1: Only one route
+        if (head->next == head && head->routeName == name) {
+            delete head;
+            head = nullptr;
+            cout << "Route '" << name << "' removed successfully." << endl;
+            return;
+        }
+
+        // Traverse the circular list
+        do {
+            if (curr->routeName == name) {
+                if (prev != nullptr)
+                    prev->next = curr->next;
+                else {
+                    // Removing head node
+                    Node* temp = head;
+                    while (temp->next != head)
+                        temp = temp->next;
+                    temp->next = head->next;
+                    head = head->next;
+                }
+                delete curr;
+                cout << "Route '" << name << "' removed successfully." << endl;
+                return;
+            }
+            prev = curr;
+            curr = curr->next;
+        } while (curr != head);
+
+        cout << "Route not found." << endl;
+    }
+
+    void displayRoutes() {
+        if (head == nullptr) {
+            cout << "No routes available." << endl;
+            return;
+        }
+
+        Node* temp = head;
+        cout << "Delivery Routes:\n";
+        do {
+            cout << temp->routeName << " --> ";
+            temp = temp->next;
+        } while (temp != head);
+        cout << "(Back to Start)" << endl;
+    }
+};
+
+int main() {
+    NavigationSystem nav;
+    int choice;
+    string name;
+    bool running = true;
+
+    while (running) {
+        cout << "\nSelect an option:\n";
+        cout << "1. Add Route\n";
+        cout << "2. Remove Route\n";
+        cout << "3. Display Routes\n";
+        cout << "4. Exit\n";
+        cout << "Enter your choice: ";
+        cin >> choice;
+
+        switch (choice) {
+            case 1:
+                cout << "Enter route name: ";
+                cin >> name;
+                nav.addRoute(name);
+                break;
+            case 2:
+                cout << "Enter route name to remove: ";
+                cin >> name;
+                nav.removeRoute(name);
+                break;
+            case 3:
+                nav.displayRoutes();
+                break;
+            case 4:
+                cout << "Exiting navigation system." << endl;
+                running = false;
+                break;
+            default:
+                cout << "Invalid choice. Please try again." << endl;
+        }
+    }
+
+    return 0;
+}
+
+<!-- Assignment 6 -->
+#include <iostream>
+using namespace std;
+
+struct Node {
+	int coef;   
+	int exp;    
+	Node* next;
+};
+
+// Create new node
+Node* createNode(int coef, int exp) {
+	Node* newNode = new Node;
+	newNode->coef = coef;
+	newNode->exp = exp;
+	newNode->next = nullptr;
+	return newNode;
+}
+
+// Insert term into polynomial in descending order of exponent
+void insertTerm(Node*& head, int coef, int exp) {
+	if (coef == 0) return;
+
+	// If list is empty or new term has higher exponent than head
+	if (head == nullptr || head->exp < exp) {
+    	Node* newNode = createNode(coef, exp);
+    	newNode->next = head;
+    	head = newNode;
+    	return;
+	}
+
+	Node* curr = head;
+	Node* prev = nullptr;
+
+	// Traverse to find position or term with same exponent
+	while (curr != nullptr && curr->exp > exp) {
+    	prev = curr;
+    	curr = curr->next;
+	}
+
+	if (curr != nullptr && curr->exp == exp) {
+    	// Combine like terms
+    	curr->coef += coef;
+    	if (curr->coef == 0) {
+        	// Remove the node
+        	if (prev == nullptr) {
+            	head = curr->next;
+        	} else {
+            	prev->next = curr->next;
+        	}
+        	delete curr;
+    	}
+	} else {
+    	// Insert new node between prev and curr
+    	Node* newNode = createNode(coef, exp);
+    	if (prev != nullptr) {
+        	prev->next = newNode;
+    	}
+    	newNode->next = curr;
+    	if (prev == nullptr) head = newNode; // New head if inserted at front
+	}
+}
+
+// Display polynomial
+void displayPolynomial(Node* head) {
+	if (head == nullptr) {
+    	cout << "0\n";
+    	return;
+	}
+	Node* curr = head;
+	bool first = true;
+	while (curr != nullptr) {
+    	if (curr->coef != 0) {
+        	if (!first && curr->coef > 0) cout << " + ";
+        	else if (curr->coef < 0) cout << " - ";
+
+        	int absCoef = abs(curr->coef);
+        	if (absCoef != 1 || curr->exp == 0) cout << absCoef;
+        	else if (curr->coef == -1 && curr->exp != 0) cout << "";
+
+        	if (curr->exp > 0) {
+            	cout << "x";
+            	if (curr->exp > 1) cout << "^" << curr->exp;
+        	}
+        	first = false;
+    	}
+    	curr = curr->next;
+	}
+	cout << "\n";
+}
+
+// Add two polynomials and return result polynomial
+Node* addPolynomials(Node* poly1, Node* poly2) {
+	Node* result = nullptr;
+	Node* p1 = poly1;
+	Node* p2 = poly2;
+
+	// Traverse both lists
+	while (p1 != nullptr && p2 != nullptr) {
+    	if (p1->exp > p2->exp) {
+        	insertTerm(result, p1->coef, p1->exp);
+        	p1 = p1->next;
+    	} else if (p2->exp > p1->exp) {
+        	insertTerm(result, p2->coef, p2->exp);
+        	p2 = p2->next;
+    	} else {
+        	// Same exponent, add coefficients
+        	int sumCoef = p1->coef + p2->coef;
+        	if (sumCoef != 0)
+            	insertTerm(result, sumCoef, p1->exp);
+        	p1 = p1->next;
+        	p2 = p2->next;
+    	}
+	}
+
+	// Add remaining terms from poly1
+	while (p1 != nullptr) {
+    	insertTerm(result, p1->coef, p1->exp);
+    	p1 = p1->next;
+	}
+	// Add remaining terms from poly2
+	while (p2 != nullptr) {
+    	insertTerm(result, p2->coef, p2->exp);
+    	p2 = p2->next;
+	}
+
+	return result;
+}
+
+// Delete polynomial list and free memory
+void deletePolynomial(Node*& head) {
+	while (head != nullptr) {
+    	Node* temp = head;
+    	head = head->next;
+    	delete temp;
+	}
+}
+
+int main() {
+	Node* poly1 = nullptr;
+	Node* poly2 = nullptr;
+	Node* result = nullptr;
+
+	int choice;
+	while (true) {
+    	cout << "\nPolynomial Operations\n";
+    	cout << "1. Insert term into Polynomial 1\n";
+    	cout << "2. Insert term into Polynomial 2\n";
+    	cout << "3. Display Polynomial 1\n";
+    	cout << "4. Display Polynomial 2\n";
+    	cout << "5. Add Polynomial 1 and Polynomial 2\n";
+    	cout << "6. Display Result Polynomial\n";
+    	cout << "7. Exit\n";
+    	cout << "Enter choice: ";
+    	cin >> choice;
+
+    	if (choice == 1 || choice == 2) {
+        	int coef, exp;
+        	cout << "Enter coefficient: ";
+        	cin >> coef;
+        	cout << "Enter exponent: ";
+        	cin >> exp;
+        	if (choice == 1) {
+            	insertTerm(poly1, coef, exp);
+        	} else {
+            	insertTerm(poly2, coef, exp);
+        	}
+    	} else if (choice == 3) {
+        	cout << "Polynomial 1: ";
+        	displayPolynomial(poly1);
+    	} else if (choice == 4) {
+        	cout << "Polynomial 2: ";
+        	displayPolynomial(poly2);
+    	} else if (choice == 5) {
+        	deletePolynomial(result);
+        	result = addPolynomials(poly1, poly2);
+        	cout << "Polynomials added.\n";
+    	} else if (choice == 6) {
+        	cout << "Result Polynomial: ";
+        	displayPolynomial(result);
+    	} else if (choice == 7) {
+        	break;
+    	} else {
+        	cout << "Invalid choice, try again.\n";
+    	}
+	}
+
+	deletePolynomial(poly1);
+	deletePolynomial(poly2);
+	deletePolynomial(result);
+	return 0;
+}
+
+<!-- Assignment 7 -->
+#include<iostream>
+using namespace std;
+
+
+class Stack {
+    string* stk;  
+    int capacity; 
+    int top;
+
+
+    void resize() {
+        int newCapacity=capacity*2;
+        string* newStk=new string[newCapacity];
+        for(int i=0;i<=top;i++) {
+            newStk[i]=stk[i];
+        }
+        delete[] stk;
+        stk=newStk;
+        capacity=newCapacity;
+    }
+
+
+public:
+    Stack() {
+        capacity=2;
+        stk=new string[capacity];
+        top=-1;
+    }
+
+
+    ~Stack() {
+        delete[] stk;
+    }
+
+
+    void addVisitedPage(const string& page) {
+        if(top==capacity-1) {
+            resize();
+        }
+        stk[++top]=page;
+        cout<<"Visited: "<<page<<endl;
+    }
+
+
+    void navigateBack() {
+        if(isEmpty()) {
+            cout<<"No previous pages to go back to."<<endl;
+        } else {
+            cout<<"Navigating back from: "<<stk[top]<<endl;
+            top--;
+        }
+    }
+
+
+    void viewCurrentPage() {
+        if(isEmpty()) {
+            cout<<"No pages in history."<<endl;
+        } else {
+            cout<<"Current page: "<<stk[top]<<endl;
+        }
+    }
+
+
+    bool isEmpty() {
+        return top==-1;
+    }
+
+
+    void displayHistory() {
+        if(isEmpty()) {
+            cout<<"History is empty."<<endl;
+        } else {
+            cout<<"Browsing History:\n";
+            for(int i=0;i<=top;i++) {
+                cout<<stk[i]<<" --> ";
+            }
+            cout<<"END"<<endl;
+        }
+    }
+};
+
+
+int main() {
+    Stack browserHistory;
+    int choice;
+    string page;
+    bool running=true;
+
+
+    while(running) {
+        cout<<"\nSelect an option:\n";
+        cout<<"1. Add visited page\n";
+        cout<<"2. Navigate back\n";
+        cout<<"3. View current page\n";
+        cout<<"4. Check if history is empty\n";
+        cout<<"5. Display full history\n";
+        cout<<"6. Exit\n";
+        cout<<"Enter your choice: ";
+        cin>>choice;
+
+
+        switch(choice) {
+            case 1:
+                cout<<"Enter page URL: ";
+                cin>>page;
+                browserHistory.addVisitedPage(page);
+                break;
+            case 2:
+                browserHistory.navigateBack();
+                break;
+            case 3:
+                browserHistory.viewCurrentPage();
+                break;
+            case 4:
+                if(browserHistory.isEmpty()) {
+                    cout<<"History is empty."<<endl;
+                } else {
+                    cout<<"History is not empty."<<endl;
+                }
+                break;
+            case 5:
+                browserHistory.displayHistory();
+                break;
+            case 6:
+                cout<<"Exiting browser history manager."<<endl;
+                running=false;
+                break;
+            default:
+                cout<<"Invalid choice. Please try again."<<endl;
+        }
+    }
+    return 0;
+}
+
+<!-- Assignment 8 -->
+#include <iostream>
+#include <string>
+using namespace std;
+
+struct Node {
+    char data;
+    Node* next;
+};
+
+class Stack {
+private:
+    Node* top;
+
+public:
+    string exp;
+
+    Stack() {
+        top = nullptr;
+        cout << "Enter the expression to be converted: ";
+        cin >> exp;
+    }
+
+    ~Stack() {
+        while (!isempty()) {
+            Pop();
+        }
+    }
+
+    void Push(char c) {
+        Node* newnode = new Node;
+        newnode->data = c;
+        newnode->next = top;
+        top = newnode;
+    }
+
+    char Pop() {
+        if (isempty()) return '\0';
+        char c = top->data;
+        Node* temp = top;
+        top = top->next;
+        delete temp;
+        return c;
+    }
+
+    bool isempty() {
+        return (top == nullptr);
+    }
+
+    int priority(char op) {
+        if (op == '*' || op == '/') return 2;
+        if (op == '+' || op == '-') return 1;
+        return 0;
+    }
+
+    string reverseFlip(const string& expr) {
+        string rev = "";
+        for (int i = expr.length() - 1; i >= 0; i--) {
+            char c = expr[i];
+            if (c == '(') rev += ')';
+            else if (c == ')') rev += '(';
+            else if (c == '{') rev += '}';
+            else if (c == '}') rev += '{';
+            else if (c == '[') rev += ']';
+            else if (c == ']') rev += '[';
+            else rev += c;
+        }
+        return rev;
+    }
+
+    string reverseString(const string& expr) {
+        return string(expr.rbegin(), expr.rend());
+    }
+
+    string infixToPostfix(const string& expr) {
+        string output = "";
+        for (char c : expr) {
+            if (isalnum(c)) {
+                output += c;
+            }
+            else if (c == '(' || c == '{' || c == '[') {
+                Push(c);
+            }
+            else if (c == '+' || c == '-' || c == '*' || c == '/') {
+                while (!isempty() && priority(c) <= priority(top->data)) {
+                    if (top->data == '(' || top->data == '{' || top->data == '[') break;
+                    output += Pop();
+                }
+                Push(c);
+            }
+            else if (c == ')' || c == '}' || c == ']') {
+                while (!isempty() && !(top->data == '(' || top->data == '{' || top->data == '[')) {
+                    output += Pop();
+                }
+                if (!isempty()) {
+                    Pop(); // remove opening bracket
+                }
+                else {
+                    cout << "\nError: Unbalanced expression.";
+                }
+            }
+            else {
+                cout << "Invalid character: " << c << endl;
+                return "";
+            }
+        }
+        while (!isempty()) {
+            if (top->data == '(' || top->data == '{' || top->data == '[') {
+                cout << "\nError: Unbalanced expression.";
+                return "";
+            }
+            output += Pop();
+        }
+        return output;
+    }
+
+    string infixToPrefix(const string& expr) {
+        string result = reverseFlip(expr);
+        result = infixToPostfix(result);
+        result = reverseString(result);
+        return result;
+    }
+};
+
+int main() {
+    Stack s;
+    cout << "Postfix expression: " << s.infixToPostfix(s.exp) << endl;
+    cout << "Prefix expression: " << s.infixToPrefix(s.exp) << endl;
+    return 0;
+}
+
+<!-- Assignment 9A -->
+#include <iostream>
+#include <string>
+using namespace std;
+
+struct Node {
+    int token;
+    Node* next;
+};
+
+class Queue {
+private:
+    Node* front;
+    Node* rear;
+
+public:
+    Queue() {
+        front = nullptr;
+        rear = nullptr;
+    }
+
+    ~Queue() {
+        while (!empty()) {
+            dequeue();
+        }
+    }
+
+    bool empty() {
+        return (rear == nullptr);
+    }
+
+    void enqueue() {
+        int token;
+        cout << "Enter the token number: ";
+        cin >> token;
+
+        Node* newnode = new Node;
+        newnode->token = token;
+        newnode->next = nullptr;
+
+        if (empty()) {
+            front = rear = newnode;
+        } else {
+            rear->next = newnode;
+            rear = newnode;
+        }
+        cout << "Token " << token << " added to the waitlist.\n";
+    }
+
+    void dequeue() {
+        if (empty()) {
+            cout << "The waitlist is empty.\n";
+            return;
+        }
+
+        Node* ptr = front;
+        cout << "Seating token no.: " << ptr->token << endl;
+
+        if (front == rear) {
+            front = rear = nullptr;
+        } else {
+            front = front->next;
+        }
+        delete ptr;
+    }
+
+    void display() {
+        if (empty()) {
+            cout << "The waitlist is empty.\n";
+            return;
+        }
+
+        cout << "Current Waitlist Tokens:\n";
+        Node* ptr = front;
+        while (ptr != nullptr) {
+            cout << ptr->token << " ";
+            ptr = ptr->next;
+        }
+        cout << endl;
+    }
+};
+
+int main() {
+    Queue q;
+    int choice;
+
+    do {
+        cout << "\n--- Waitlist Menu ---\n";
+        cout << "1. Add Party\n";
+        cout << "2. Seat Party\n";
+        cout << "3. Display Waitlist\n";
+        cout << "0. Exit\n";
+        cout << "Enter your choice: ";
+        cin >> choice;
+
+        switch (choice) {
+        case 1:
+            q.enqueue();
+            break;
+        case 2:
+            q.dequeue();
+            break;
+        case 3:
+            q.display();
+            break;
+        case 0:
+            cout << "Exiting program..." << endl;
+            break;
+        default:
+            cout << "Invalid choice! Please try again.\n";
+        }
+    } while (choice != 0);
+
+    return 0;
+}
+
+<!-- Assignment 9B -->
+#include <iostream>
+#include <string>
+using namespace std;
+
+class Queue{
+	public:
+	int coustomer[4];
+	int F;
+	int R;
+	
+	Queue(){
+		F = -1;
+		R = -1;
+	}
+	
+	int empty(){
+		if (R == -1){
+			return 1;
+		}
+		else{
+			return 0;
+		}
+	}
+	
+	int full(){
+		if ((R+1)%4 == F){
+			return 1;
+		}
+		else{
+			return 0;
+		}
+	}
+	
+	void enqueue(){
+		int token;
+		cout << "Enter the token number: " ;
+		cin >> token;
+		
+		if(full() == 1){
+			cout << "The queue is full.\n ";
+		}
+		else if(empty() == 1){
+			F = (F+1)%4;
+			R = (R+1)%4;
+			coustomer[R] = token;
+		}
+		else{
+			R = (R+1)%4;
+			coustomer[R] = token;
+		}
+	}
+	
+	void dequeue(){		
+		if(empty() == 1){
+			cout<<"The queue is empty."<<endl;
+		}
+		else if(F == R){
+			cout << "Token no.: " << coustomer[F] << endl;
+			F = -1;
+			R = -1;
+		}	
+		else {
+			cout << "Token no.: " << coustomer[F] << endl;
+			F = (F+1)%4;
+		}
+	}
+	
+	void close(){
+		cout << "Closing counter..." <<endl;
+		while(!empty()){
+			dequeue();
+		}
+		cout << "Counter closed.\n" ;
+	}
+	
+	void display(){
+		int ptr = F;
+		while(ptr != -1){
+			if(F == R){
+				cout << "Token no.: " << coustomer[ptr] << endl;
+				ptr=-1;
+			}	
+			else {
+				cout << "Token no.: " << coustomer[ptr] << endl;
+				if(ptr == R){
+					ptr = -1;
+				}
+				else{	
+					ptr = (ptr+1)%4;
+				}
+			}
+		}
+		if(empty() == 1){
+			cout<<"The queue is empty."<<endl;
+			ptr=-1;
+		}
+	}
+};
+
+int main(){
+	Queue q;
+	int choice;
+	
+	do {
+        cout << "\nSupermarket Checkout Counter:\n";
+        cout << "1. Customer arrival\n";
+        cout << "2. Customer checkout\n";
+        cout << "3. Close Checkout Counter\n";
+        cout << "4. View Counter\n";
+        cout << "0. Exit\n";
+        
+        cout << "Enter your choice: ";
+        cin >> choice;
+
+        switch (choice) {
+        case 1:
+            q.enqueue();
+            break;
+        case 2:
+            q.dequeue();
+            break;
+        case 3:
+            q.close();
+            break;
+        case 4:
+            q.display();
+            break;
+        case 0:
+            cout << "Exiting..." << endl;
+            break;
+        default:
+            cout << "Invalid choice!" << endl;
+        }
+    } while (choice != 0);
+
+    return 0;
+}
+
+<!-- Assignment 10 -->
+#include <iostream>
+using namespace std;
+
+struct Job {
+    int id;
+    string name;
+    int priority;
+    Job *next, *prev;
+};
+
+class JobScheduler {
+    Job *front, *rear;
+
+public:
+    JobScheduler() {
+        front = rear = NULL;
+    }
+
+    void addJob() {
+        Job *temp = new Job;
+        cout << "\nEnter Job ID: ";
+        cin >> temp->id;
+        cout << "Enter Job Name: ";
+        cin >> temp->name;
+        cout << "Enter Priority (1=High, 2=Low): ";
+        cin >> temp->priority;
+        temp->next = temp->prev = NULL;
+
+        if (front == NULL) {
+            front = rear = temp;
+        } 
+        else if (temp->priority == 1) {   // High priority -> front
+            temp->next = front;
+            front->prev = temp;
+            front = temp;
+        } 
+        else {                            // Low priority -> rear
+            rear->next = temp;
+            temp->prev = rear;
+            rear = temp;
+        }
+        cout << "Job Added!\n";
+    }
+
+    void removeJob() {
+        if (front == NULL) {
+            cout << "No jobs to remove!\n";
+            return;
+        }
+        int ch;
+        cout << "Remove from (1.Front / 2.Rear): ";
+        cin >> ch;
+        if (ch == 1) {
+            Job *t = front;
+            cout << "Removing Job ID: " << t->id << endl;
+            front = front->next;
+            if (front) front->prev = NULL;
+            delete t;
+        } else {
+            Job *t = rear;
+            cout << "Removing Job ID: " << t->id << endl;
+            rear = rear->prev;
+            if (rear) rear->next = NULL;
+            delete t;
+        }
+    }
+
+    void displayJobs() {
+        if (front == NULL) {
+            cout << "No jobs in queue!\n";
+            return;
+        }
+        cout << "\nJobID\tName\tPriority\n";
+        Job *temp = front;
+        while (temp) {
+            cout << temp->id << "\t" << temp->name << "\t" 
+                 << (temp->priority == 1 ? "High" : "Low") << endl;
+            temp = temp->next;
+        }
+    }
+
+    void searchJob() {
+        if (front == NULL) {
+            cout << "Queue is empty!\n";
+            return;
+        }
+        int id; bool found = false;
+        cout << "Enter Job ID to search: ";
+        cin >> id;
+        Job *temp = front;
+        while (temp) {
+            if (temp->id == id) {
+                cout << "Job Found -> Name: " << temp->name 
+                     << ", Priority: " << (temp->priority==1?"High":"Low") << endl;
+                found = true;
+                break;
+            }
+            temp = temp->next;
+        }
+        if (!found) cout << "Job not found!\n";
+    }
+};
+
+int main() {
+    JobScheduler js;
+    int ch;
+    do {
+        cout << "\n1.Add Job\n2.Remove Job\n3.Display Jobs\n4.Search Job\n5.Exit\nEnter choice: ";
+        cin >> ch;
+        switch(ch) {
+            case 1: js.addJob(); break;
+            case 2: js.removeJob(); break;
+            case 3: js.displayJobs(); break;
+            case 4: js.searchJob(); break;
+            case 5: cout << "Exiting...\n"; break;
+            default: cout << "Invalid choice!\n";
+        }
+    } while(ch != 5);
+    return 0;
+}
+
+<!-- Assignment 11 -->
+#include <iostream>
+#include <string>
+using namespace std;
+
+const int SIZE = 10;  // Hash table size
+
+// Structure for each employee node
+struct Employee {
+    int id;
+    string name;
+    Employee* next;
+};
+
+// Hash function
+int hashFunction(int id) {
+    return id % SIZE;
+}
+
+// Insert employee into hash table (with collision handling using chaining)
+void insert(Employee* hashTable[], int id, string name) {
+    int index = hashFunction(id);
+    Employee* newEmp = new Employee{id, name, nullptr};
+
+    if (hashTable[index] == nullptr) {
+        // No collision
+        hashTable[index] = newEmp;
+    } else {
+        // Collision — add to the end of the chain
+        Employee* temp = hashTable[index];
+        while (temp->next != nullptr)
+            temp = temp->next;
+        temp->next = newEmp;
+    }
+}
+
+// Search for employee by ID
+void search(Employee* hashTable[], int id) {
+    int index = hashFunction(id);
+    Employee* temp = hashTable[index];
+
+    while (temp != nullptr) {
+        if (temp->id == id) {
+            cout << "Employee Found: " << temp->name << " (ID: " << temp->id << ")\n";
+            return;
+        }
+        temp = temp->next;
+    }
+    cout << "Employee not found.\n";
+}
+
+// Display hash table contents
+void display(Employee* hashTable[]) {
+    cout << "\n--- Hash Table Contents ---\n";
+    for (int i = 0; i < SIZE; i++) {
+        cout << "[" << i << "] -> ";
+        Employee* temp = hashTable[i];
+        if (temp == nullptr)
+            cout << "Empty";
+        while (temp != nullptr) {
+            cout << "(" << temp->id << ", " << temp->name << ")";
+            if (temp->next != nullptr) cout << " -> ";
+            temp = temp->next;
+        }
+        cout << "\n";
+    }
+}
+
+int main() {
+    Employee* hashTable[SIZE] = {nullptr};
+    int n;
+
+    cout << "Enter number of employees: ";
+    cin >> n;
+
+    for (int i = 0; i < n; i++) {
+        int id;
+        string name;
+        cout << "Enter Employee ID: ";
+        cin >> id;
+        cout << "Enter Employee Name: ";
+        cin >> name;
+        insert(hashTable, id, name);
+    }
+
+    cout << "\nEmployee Database Created Successfully.\n";
+    display(hashTable);
+
+    int searchID;
+    cout << "\nEnter Employee ID to search: ";
+    cin >> searchID;
+
+    search(hashTable, searchID);
+
+    return 0;
+}
+
+<!-- END -->
